@@ -4,6 +4,7 @@ const ADD_POST = "ADD-POST";
 const UPDATE_NEW_POST_TEXT = "UPDATE-NEW-POST-TEXT";
 const SET_USER_PROFILE = "SET-USER-PROFILE";
 const TOGGLE_IS_FETCHING = "TOGGLE_IS_FETCHING";
+const SET_STATUS = "SET_STATUS";
 
 let initialState = {
         posts: [
@@ -12,7 +13,8 @@ let initialState = {
         ],
         newPostText: "it",
     profile: null,
-    isFetching: false
+    isFetching: false,
+    status: ""
     };
 
 
@@ -48,6 +50,12 @@ const profileReducer = (state = initialState,action) =>{
                 profile: action.profile
             }
         }
+        case SET_STATUS:{
+            return{
+                ...state,
+                status: action.status
+            }
+        }
 
         case TOGGLE_IS_FETCHING:
         {
@@ -64,6 +72,11 @@ const profileReducer = (state = initialState,action) =>{
 export const setUserProfile = (profile) => {
     return {type:SET_USER_PROFILE,
     profile}
+};
+
+export const setStatus = (status) => {
+    return {type:SET_STATUS,
+    status}
 };
 
 export const addPost = () => {
@@ -104,5 +117,28 @@ export const freeComponentProfile = () =>{
         dispatch(setUserProfile(null));
     }
  };
+
+export const getStatus = (userId) =>{
+    return (dispatch) =>{
+        profileApi.getStatus(userId)
+            .then(
+                response => {
+                    dispatch(setStatus(response.data))
+                }
+            );
+    };
+};
+export const updateStatus = (status) =>{
+    return (dispatch) =>{
+        profileApi.updateStatus(status)
+            .then(
+                response => {
+                    if (response.data.resultCode === 0){
+                        dispatch(setStatus(status))
+                    }
+                }
+            );
+    };
+};
 
 export default profileReducer;
